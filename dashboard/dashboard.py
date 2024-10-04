@@ -3,22 +3,19 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-# Membaca data
+# Membaca dan memproses data
 main_data = pd.read_csv('dashboard/main_data.csv')
 
-# Menggunakan kolom yang relevan
+# Mengubah tipe data kolom dteday menjadi datetime
+main_data['dteday'] = pd.to_datetime(main_data['dteday'], errors='coerce').dropna()
+
+# Mengganti nama kolom untuk kemudahan
 main_data = main_data.rename(columns={
     'season_x': 'season',
     'registered_x': 'registered',
     'casual_x': 'casual',
     'cnt_x': 'cnt'
 })
-
-# Mengubah tipe data kolom dteday menjadi datetime
-main_data['dteday'] = pd.to_datetime(main_data['dteday'], errors='coerce')
-
-# Menghapus baris dengan NaT di dteday
-main_data = main_data.dropna(subset=['dteday'])
 
 # Judul Aplikasi
 st.title('Dashboard Penyewaan Sepeda')
@@ -31,37 +28,24 @@ start_date = st.sidebar.date_input('Start date', main_data['dteday'].min())
 end_date = st.sidebar.date_input('End date', main_data['dteday'].max())
 
 # Filter berdasarkan musim
-season_filter = st.sidebar.multiselect(
-    "Pilih Musim",
-    options=main_data['season'].unique(),
-    default=main_data['season'].unique()
-)
+season_filter = st.sidebar.multiselect("Pilih Musim", options=main_data['season'].unique(), default=main_data['season'].unique())
 
 # Filter berdasarkan jenis pengguna
-user_type = st.sidebar.radio(
-    "Pilih Jenis Pengguna",
-    ('Semua Pengguna', 'Pengguna Terdaftar', 'Pengguna Kasual')
-)
+user_type = st.sidebar.radio("Pilih Jenis Pengguna", ('Semua Pengguna', 'Pengguna Terdaftar', 'Pengguna Kasual'))
 
 # Menerapkan filter
-filtered_data = main_data[
-    (main_data['dteday'] >= pd.to_datetime(start_date)) &
-    (main_data['dteday'] <= pd.to_datetime(end_date)) &
-    (main_data['season'].isin(season_filter))
-]
+filtered_data = main_data[(main_data['dteday'] >= start_date) & (main_data['dteday'] <= end_date) & (main_data['season'].isin(season_filter))]
 
-# Memilih kolom berdasarkan jenis pengguna
+# Mengatur kolom berdasarkan jenis pengguna
 if user_type == 'Pengguna Terdaftar':
-    filtered_data = filtered_data[['dteday', 'registered']].copy()
     filtered_data['cnt'] = filtered_data['registered']
 elif user_type == 'Pengguna Kasual':
-    filtered_data = filtered_data[['dteday', 'casual']].copy()
     filtered_data['cnt'] = filtered_data['casual']
 else:
     filtered_data['cnt'] = filtered_data['registered'] + filtered_data['casual']
 
 # Menampilkan beberapa baris data
-st.write("Data Penyewaan Sepeda", filtered_data.head())
+st.write("Data Penyewaan Sepeda", filtered_data[['dteday', 'cnt']].head())
 
 # Plot Tren Total Penyewaan Sepeda Sepanjang Waktu
 st.subheader('Tren Total Penyewaan Sepeda Sepanjang Waktu')
@@ -76,7 +60,7 @@ st.pyplot(fig)
 # Plot Distribusi Penyewaan Sepeda Berdasarkan Musim
 st.subheader('Distribusi Penyewaan Sepeda Berdasarkan Musim')
 fig, ax = plt.subplots(figsize=(8, 6))
-sns.boxplot(x='season', y='cnt', data=main_data[main_data['season'].isin(season_filter)], ax=ax)
+sns.boxplot(x='season', y='cnt', data=filtered_data, ax=ax)
 plt.title('Distribusi Penyewaan Sepeda Berdasarkan Musim')
 plt.xlabel('Musim')
 plt.ylabel('Total Penyewaan Sepeda')
@@ -101,7 +85,7 @@ st.pyplot(fig)
 
 # Menampilkan statistik deskriptif
 st.subheader('Statistik Deskriptif Penyewaan Sepeda')
-st.write(filtered_data.describe())
+st.write(filtered_data[['dteday', 'cnt']].describe())
 
 # Footer
 st.markdown('**Created by Lorenza Lennyta Dewi**')
