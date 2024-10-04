@@ -6,7 +6,7 @@ import seaborn as sns
 # Membaca data
 main_data = pd.read_csv('dashboard/main_data.csv')
 
-# Menggunakan kolom yang relevan (misalnya, kolom _x untuk season, registered, casual, dll.)
+# Menggunakan kolom yang relevan
 main_data = main_data.rename(columns={
     'season_x': 'season',
     'registered_x': 'registered',
@@ -15,7 +15,10 @@ main_data = main_data.rename(columns={
 })
 
 # Mengubah tipe data kolom dteday menjadi datetime
-main_data['dteday'] = pd.to_datetime(main_data['dteday'])
+main_data['dteday'] = pd.to_datetime(main_data['dteday'], errors='coerce')
+
+# Menghapus baris dengan NaT di dteday
+main_data = main_data.dropna(subset=['dteday'])
 
 # Judul Aplikasi
 st.title('Dashboard Penyewaan Sepeda')
