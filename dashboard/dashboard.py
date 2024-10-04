@@ -6,11 +6,6 @@ import seaborn as sns
 # Membaca data
 main_data = pd.read_csv('dashboard/main_data.csv')
 
-import streamlit as st
-import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
-
 # Menggunakan kolom yang relevan (misalnya, kolom _x untuk season, registered, casual, dll.)
 main_data = main_data.rename(columns={
     'season_x': 'season',
@@ -52,12 +47,15 @@ filtered_data = main_data[
     (main_data['season'].isin(season_filter))
 ]
 
+# Memilih kolom berdasarkan jenis pengguna
 if user_type == 'Pengguna Terdaftar':
-    filtered_data = filtered_data[['dteday', 'registered', 'cnt']].copy()
+    filtered_data = filtered_data[['dteday', 'registered']].copy()
     filtered_data['cnt'] = filtered_data['registered']
 elif user_type == 'Pengguna Kasual':
-    filtered_data = filtered_data[['dteday', 'casual', 'cnt']].copy()
+    filtered_data = filtered_data[['dteday', 'casual']].copy()
     filtered_data['cnt'] = filtered_data['casual']
+else:
+    filtered_data['cnt'] = filtered_data['registered'] + filtered_data['casual']
 
 # Menampilkan beberapa baris data
 st.write("Data Penyewaan Sepeda", filtered_data.head())
