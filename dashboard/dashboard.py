@@ -3,21 +3,37 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-# Load and preprocess the data
+# Load and preprocess the optimized data
 @st.cache_data
-def load_data():
-    data = pd.read_csv('./dashboard/main_data.csv')
-    # Select and rename relevant columns
-    data = data[['dteday', 'season_x', 'registered_x', 'casual_x', 'cnt_x']].rename(columns={
+def load_optimized_cleaned_data():
+    # Define dtypes for memory optimization
+    dtype_mapping = {
+        'season_x': 'category',  # Convert to category
+        'registered_x': 'int32', # Convert to int32 to reduce memory
+        'casual_x': 'int32',     # Convert to int32 to reduce memory
+        'cnt_x': 'int32'         # Convert to int32 as well
+    }
+    
+    # Load the necessary columns with dtype specifications
+    data = pd.read_csv('/mnt/data/main_data.csv', usecols=['dteday', 'season_x', 'registered_x', 'casual_x', 'cnt_x'], dtype=dtype_mapping)
+    
+    # Convert 'dteday' to datetime
+    data['dteday'] = pd.to_datetime(data['dteday'])
+    
+    # Remove duplicate rows
+    data = data.drop_duplicates()
+    
+    # Rename columns for consistency
+    data = data.rename(columns={
         'season_x': 'season',
         'registered_x': 'registered',
         'casual_x': 'casual',
         'cnt_x': 'cnt'
     })
-    data['dteday'] = pd.to_datetime(data['dteday'])
+    
     return data
 
-main_data = load_data()
+main_data = load_optimized_cleaned_data()
 
 # Title of the application
 st.title('Dashboard Penyewaan Sepeda')
