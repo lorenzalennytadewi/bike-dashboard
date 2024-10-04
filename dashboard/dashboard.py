@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # Membaca data
-main_data = pd.read_csv('https://raw.githubusercontent.com/lorenzalennytadewi/bike-dashboard/refs/heads/main/dashboard/main_data.csv')
+main_data = pd.read_csv('dashboard/main_data.csv')
 
 import streamlit as st
 import pandas as pd
@@ -58,6 +58,9 @@ if user_type == 'Pengguna Terdaftar':
 elif user_type == 'Pengguna Kasual':
     filtered_data = filtered_data[['dteday', 'casual', 'cnt']].copy()
     filtered_data['cnt'] = filtered_data['casual']
+
+# Menampilkan beberapa baris data
+st.write("Data Penyewaan Sepeda", filtered_data.head())
 
 # Plot Tren Total Penyewaan Sepeda Sepanjang Waktu
 st.subheader('Tren Total Penyewaan Sepeda Sepanjang Waktu')
