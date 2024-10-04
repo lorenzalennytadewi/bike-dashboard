@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # Membaca data
-main_data = pd.read_csv('dashboard/main_data.csv')
+main_data = pd.read_csv('https://raw.githubusercontent.com/lorenzalennytadewi/bike-dashboard/refs/heads/main/dashboard/main_data.csv')
 
 import streamlit as st
 import pandas as pd
