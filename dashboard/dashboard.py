@@ -15,7 +15,7 @@ def load_optimized_cleaned_data():
     }
     
     # Load the necessary columns with dtype specifications
-    data = pd.read_csv('./dashboard/main_data.csv', usecols=['dteday', 'season_x', 'registered_x', 'casual_x', 'cnt_x'], dtype=dtype_mapping)
+    data = pd.read_csv('dashboard/main_data.csv', usecols=['dteday', 'season_x', 'registered_x', 'casual_x', 'cnt_x'], dtype=dtype_mapping)
     
     # Convert 'dteday' to datetime
     data['dteday'] = pd.to_datetime(data['dteday'])
