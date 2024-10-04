@@ -24,8 +24,12 @@ st.title('Dashboard Penyewaan Sepeda')
 st.sidebar.header("Filter Data")
 
 # Filter berdasarkan tanggal
-start_date = st.sidebar.date_input('Start date', main_data['dteday'].min())
-end_date = st.sidebar.date_input('End date', main_data['dteday'].max())
+start_date = st.sidebar.date_input('Start date', main_data['dteday'].min().date())
+end_date = st.sidebar.date_input('End date', main_data['dteday'].max().date())
+
+# Konversi ke datetime untuk perbandingan
+start_date = pd.to_datetime(start_date)
+end_date = pd.to_datetime(end_date)
 
 # Filter berdasarkan musim
 season_filter = st.sidebar.multiselect("Pilih Musim", options=main_data['season'].unique(), default=main_data['season'].unique())
@@ -34,7 +38,11 @@ season_filter = st.sidebar.multiselect("Pilih Musim", options=main_data['season'
 user_type = st.sidebar.radio("Pilih Jenis Pengguna", ('Semua Pengguna', 'Pengguna Terdaftar', 'Pengguna Kasual'))
 
 # Menerapkan filter
-filtered_data = main_data[(main_data['dteday'] >= start_date) & (main_data['dteday'] <= end_date) & (main_data['season'].isin(season_filter))]
+filtered_data = main_data[
+    (main_data['dteday'] >= start_date) &
+    (main_data['dteday'] <= end_date) &
+    (main_data['season'].isin(season_filter))
+]
 
 # Mengatur kolom berdasarkan jenis pengguna
 if user_type == 'Pengguna Terdaftar':
