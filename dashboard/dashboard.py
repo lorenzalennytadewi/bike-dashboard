@@ -6,7 +6,7 @@ import seaborn as sns
 # Load and preprocess the data
 @st.cache_data
 def load_data():
-    data = pd.read_csv('dashboard/main_data.csv')
+    data = pd.read_csv('./dashboard/main_data.csv')
     # Select and rename relevant columns
     data = data[['dteday', 'season_x', 'registered_x', 'casual_x', 'cnt_x']].rename(columns={
         'season_x': 'season',
